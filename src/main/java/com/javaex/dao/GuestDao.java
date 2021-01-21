@@ -128,7 +128,7 @@ public class GuestDao {
 	}
 	
 	// 사람 삭제
-	public int guestDelete(int no, String password) {
+	public int guestDelete(int no) {
 		int count = 0;
 		getConnection();
 
@@ -137,11 +137,10 @@ public class GuestDao {
 			String query = ""; // 쿼리문 문자열만들기, ? 주의
 			query += " delete from gusetbook ";
 			query += " where no = ? ";
-			query += " and password = ? ";
 			pstmt = conn.prepareStatement(query); // 쿼리로 만들기
 
 			pstmt.setInt(1, no);
-			pstmt.setNString(2, password);
+	
 
 			count = pstmt.executeUpdate(); // 쿼리문 실행
 

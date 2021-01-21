@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -38,15 +39,10 @@ public class GuestController {
 	
 	//등록
 	@RequestMapping(value="/add", method = {RequestMethod.GET, RequestMethod.POST})
-	public String add(@RequestParam("name") String name,
-					  @RequestParam("password") String password,
-					  @RequestParam("content") String content) {
-		
+	public String add(@ModelAttribute GuestVo guestVo) {
+			
 		System.out.println("등록");
-		System.out.println(name + ", " + password + ", " + content);
-		
-		GuestVo guestVo = new GuestVo(name, password, content);
-		
+				
 		GuestDao guestDao = new GuestDao();
 		guestDao.addGuest(guestVo);
 		
@@ -55,34 +51,30 @@ public class GuestController {
 	}
 	
 	//삭제 폼
-	@RequestMapping(value ="/deleteForm", method = {RequestMethod.GET, RequestMethod.POST})
-	public String deleteForm(@RequestParam("no") int no) {
+	@RequestMapping(value ="/deleteForm{no}", method = {RequestMethod.GET, RequestMethod.POST})
+	public String deleteForm(@PathVariable("no") int no, Model model) {
 		
 		System.out.println("삭제 폼");
 		System.out.println(no);
+		
+		model.addAttribute("no", no);
 		
 		return "deleteForm";
 	}
 	
 	
 	//삭제
-	@RequestMapping(value="/delete", method = {RequestMethod.GET, RequestMethod.POST})
-	public String delete(@RequestParam("no") int no,
-						 @RequestParam("password") String password) {
+	@RequestMapping(value="/delete/{no}", method = {RequestMethod.GET, RequestMethod.POST})
+	public String delete(@ModelAttribute GuestVo guestVo) {
 		
 		System.out.println("삭제");
 		
 		GuestDao guestDao = new GuestDao();
-		int count = guestDao.guestDelete(no, password);
+		guestDao.guestDelete(guestVo);
 		
-		if(count == 1) {
 			return "redirect:/guest/addlist";
-		} else {
-			System.out.println("비밀번호 불일치");
 			
-			return "deleteFrom"; 
-		}
-
+		
 	}
 
 }
